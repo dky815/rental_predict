@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import re
 import time
 
-csv_file_train = pd.read_csv("train_data.csv")
-csv_file_test = pd.read_csv('test_a.csv')
+csv_file_train = pd.read_csv("../data/train_data.csv")
+csv_file_test = pd.read_csv('../data/test_a.csv')
 
 
 def rentType2number(rentstr):
@@ -188,6 +188,7 @@ def process_city(df_process):
     df_process.drop(['city'], axis=1, inplace=True)
     return df_process
 
+
 def process_tradeTime(df_process):
     list_year = []
     list_month = []
@@ -204,22 +205,26 @@ def process_tradeTime(df_process):
     df_res.drop(['tradeTime'], axis=1, inplace=True)
     return df_res
 
+
 def process_buildYear(df_process):
-    df_process.loc[df_process['buildYear'] == '暂无信息','buildYear'] = 0
+    df_process.loc[df_process['buildYear'] == '暂无信息', 'buildYear'] = 0
     df_process['buildYear'] = pd.to_numeric(df_process['buildYear'])
-    total_value = csv_file_train[csv_file_train['buildYear'] != 0]['buildYear'].sum()
-    total_num = (csv_file_train['buildYear'] != 0).sum()
-    ave = int(total_value/total_num)
-    df_process.loc[df_process['buildYear'] == 0,'buildYear'] = ave
+    total_value = df_process[df_process['buildYear'] != 0]['buildYear'].sum()
+    total_num = (df_process['buildYear'] != 0).sum()
+    ave = int(total_value / total_num)
+    df_process.loc[df_process['buildYear'] == 0, 'buildYear'] = ave
     return df_process
+
 
 def process_plate(df_process):
     df_process['plate'] = df_process['plate'].map(lambda x: x[2:])
     return df_process
 
+
 def process_region(df_process):
     df_process['region'] = df_process['region'].map(lambda x: x[2:])
     return df_process
+
 
 def preprocess(csv_file):
     df_new = csv_file.copy()
@@ -240,5 +245,6 @@ def preprocess(csv_file):
 if __name__ == "__main__":
     start_time = time.time()
     df_new = preprocess(csv_file_train)
+    df_new.to_csv('../result/data_processed.csv')
     end_time = time.time()
     print("cost time = " + str(end_time - start_time))
