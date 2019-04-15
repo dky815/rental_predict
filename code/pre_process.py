@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import re
 import time
 
-csv_file_train = pd.read_csv(r"../data/train_data.csv")
-csv_file_test = pd.read_csv(r'../data/test_a.csv')
+csv_file_train = pd.read_csv("train_data.csv")
+csv_file_test = pd.read_csv('test_a.csv')
 
 
 def rentType2number(rentstr):
@@ -188,6 +188,38 @@ def process_city(df_process):
     df_process.drop(['city'], axis=1, inplace=True)
     return df_process
 
+def process_tradeTime(df_process):
+    list_year = []
+    list_month = []
+    list_day = []
+    for index, row in df_process.iterrows():
+        time_str = row['tradeTime']
+        list_num = re.findall('[0-9]+', time_str)
+        list_year.append(list_num[0])
+        list_month.append(list_num[1])
+        list_day.append(list_num[2])
+    dict_time = {"year": list_year, "month": list_month, "day": list_day}
+    df_time = pd.DataFrame(dict_time)
+    df_res = pd.concat([df_process, df_time], axis=1)
+    df_res.drop(['tradeTime'], axis=1, inplace=True)
+    return df_res
+
+def process_buildYear(df_process):
+    df_process.loc[df_process['buildYear'] == '暂无信息','buildYear'] = 0
+    df_process['buildYear'] = pd.to_numeric(df_process['buildYear'])
+    total_value = csv_file_train[csv_file_train['buildYear'] != 0]['buildYear'].sum()
+    total_num = (csv_file_train['buildYear'] != 0).sum()
+    ave = int(total_value/total_num)
+    df_process.loc[df_process['buildYear'] == 0,'buildYear'] = ave
+    return df_process
+
+def process_plate(df_process):
+    df_process['plate'] = df_process['plate'].map(lambda x: x[2:])
+    return df_process
+
+def process_region(df_process):
+    df_process['region'] = df_process['region'].map(lambda x: x[2:])
+    return df_process
 
 def preprocess(csv_file):
     df_new = csv_file.copy()
@@ -198,6 +230,10 @@ def preprocess(csv_file):
     df_new = process_houseDecoration(df_new)
     df_new = process_communityName(df_new)
     df_new = process_city(df_new)
+    df_new = process_tradeTime(df_new)
+    df_new = process_buildYear(df_new)
+    df_new = process_plate(df_new)
+    df_new = process_region(df_new)
     return df_new
 
 
