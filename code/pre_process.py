@@ -7,6 +7,10 @@ csv_file_train = pd.read_csv("../data/train_data.csv")
 csv_file_test = pd.read_csv('../data/test_a.csv')
 
 
+# area>=1500
+# tradeMoney>=500000
+
+
 def rentType2number(rentstr):
     if rentstr == '未知方式' or rentstr == '--':
         return 0
@@ -23,6 +27,12 @@ def houseFloor2number(floorstr):
         return 1
     else:
         return 2
+
+
+def filter(df_process):
+    df_process = df_process[df_process['area'] <= 1500]
+    df_process = df_process[df_process['tradeMoney'] <= 500000]
+    return df_process
 
 
 def process_rentType(df_process):
@@ -199,7 +209,7 @@ def process_tradeTime(df_process):
         list_year.append(list_num[0])
         list_month.append(list_num[1])
         list_day.append(list_num[2])
-    dict_time = {"year": list_year, "month": list_month, "day": list_day}
+    dict_time = {"tradeYear": list_year, "tradeMonth": list_month, "tradeDay": list_day}
     df_time = pd.DataFrame(dict_time)
     df_res = pd.concat([df_process, df_time], axis=1)
     df_res.drop(['tradeTime'], axis=1, inplace=True)
@@ -228,6 +238,7 @@ def process_region(df_process):
 
 def preprocess(csv_file):
     df_new = csv_file.copy()
+    df_new = filter(df_new)
     df_new = process_rentType(df_new)
     df_new = process_houseType(df_new)
     df_new = process_houseFloor(df_new)
@@ -245,6 +256,6 @@ def preprocess(csv_file):
 if __name__ == "__main__":
     start_time = time.time()
     df_new = preprocess(csv_file_train)
-    df_new.to_csv('../result/data_processed.csv')
+    df_new.to_csv('../result/data_processed.csv', index=False)
     end_time = time.time()
     print("cost time = " + str(end_time - start_time))
