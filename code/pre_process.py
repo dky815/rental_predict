@@ -31,14 +31,16 @@ def houseFloor2number(floorstr):
 
 def filter(df_process):
     list_drop_index = []
+    df_res = pd.DataFrame(columns=df_process.columns)
     for index, row in df_process.iterrows():
         area = row['area']
         tradeMoney = row['tradeMoney']
-        if area >= 1500 or tradeMoney >= 500000:
+        if area <= 6 or area >= 1500 or tradeMoney >= 500000:
             list_drop_index.append(index)
     list_drop_index = list(set(list_drop_index))
-    df_process.drop(list_drop_index)
-    return df_process
+    df_process = df_process.drop(list_drop_index)
+    df_res = df_res.append(df_process, ignore_index=True)
+    return df_res
 
 
 def process_rentType(df_process):
