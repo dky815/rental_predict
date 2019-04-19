@@ -25,15 +25,13 @@ csv_file_train.info()
 
 
 import numpy as np
-csv_file_train=pd.read_csv('train_data.csv')
-y_real=csv_file_train['tradeMoney'].tolist()
-y_predict=[0 for i in range(len(y_real))]
+csv_file_train=pd.read_csv('../data/test_a.csv')
 
-def cal_score(y_real,y_predict):
-    y_r=np.array(y_real)
-    y_p=np.array(y_predict)
+def cal_score(df_predict):
+    y_real=df_predict['tradeMoney'].tolist()
+    y_predict=[0 for i in range(len(y_real))]
     m=len(y_real)
-    y_average=np.mean(y_r)
+    y_average=np.mean(np.array(y_real))
     sum_fz=0
     sum_fm=0
     for i in range(m):
@@ -41,7 +39,8 @@ def cal_score(y_real,y_predict):
         sum_fm+=(y_real[i]-y_average)**2
     score=1-sum_fz/sum_fm
     return score
-score=cal_score(y_real,y_real)
+
+score=cal_score(csv_file_train)
 print(score)
 
 
