@@ -40,6 +40,18 @@ def cal_score(df_predict):
     score=1-sum_fz/sum_fm
     return score
 
+def test_score(df_test, y_predict):
+    y_real=df_test['tradeMoney'].tolist()
+    m=len(y_real)
+    y_average=np.mean(np.array(y_real))
+    sum_fz=0
+    sum_fm=0
+    for i in range(m):
+        sum_fz+=(y_predict[i][0]-y_real[i])**2
+        sum_fm+=(y_real[i]-y_average)**2
+    score=1-sum_fz/sum_fm
+    return score
+    
 score=cal_score(csv_file_train)
 print(score)
 
