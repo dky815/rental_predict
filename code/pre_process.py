@@ -35,7 +35,7 @@ def filter(df_process):
     for index, row in df_process.iterrows():
         area = row['area']
         tradeMoney = row['tradeMoney']
-        if area <= 6 or area >= 1500 or tradeMoney >= 500000:
+        if area <= 6 or area >= 1500 or tradeMoney >= 500000 or float(tradeMoney) / float(area) >= 1500:
             list_drop_index.append(index)
     list_drop_index = list(set(list_drop_index))
     df_process = df_process.drop(list_drop_index)
@@ -234,6 +234,28 @@ def process_buildYear(df_process):
     return df_process
 
 
+def process_uv_pv(df_process):
+    list_nan = list(df_process[df_process.isnull().values == True].index)
+    sum_uv = 0
+    sum_pv = 0
+    cnt_uv = 0
+    cnt_pv = 0
+    for index, row in df_process.iterrows():
+        uv = row['uv']
+        pv = row['pv']
+        if str(uv) != 'nan' and str(pv) != 'nan':
+            sum_uv += uv
+            sum_pv += pv
+            cnt_uv += 1
+            cnt_pv += 1
+
+    avg_uv = sum_uv / cnt_uv
+    avg_pv = sum_pv / cnt_pv
+    df_process.loc[list_nan, 'uv'] = avg_uv
+    df_process.loc[list_nan, 'pv'] = avg_pv
+    return df_process
+
+
 def process_plate(df_process):
     df_process['plate'] = df_process['plate'].map(lambda x: x[2:])
     return df_process
@@ -256,6 +278,7 @@ def preprocess(csv_file):
     df_new = process_city(df_new)
     df_new = process_tradeTime(df_new)
     df_new = process_buildYear(df_new)
+    df_new = process_uv_pv(df_new)
     df_new = process_plate(df_new)
     df_new = process_region(df_new)
     return df_new
