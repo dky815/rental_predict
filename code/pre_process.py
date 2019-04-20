@@ -45,7 +45,25 @@ def filter(df_process):
 
 def process_rentType(df_process):
     df_process['rentType'] = df_process['rentType'].map(rentType2number)
-    return df_process
+    list_unknown = []
+    list_zheng = []
+    list_he = []
+    for index, row in df_process.iterrows():
+        rent_type = row['rentType']
+        if rent_type == 0:
+            type_list = [1, 0, 0]
+        elif rent_type == 1:
+            type_list = [0, 1, 0]
+        else:
+            type_list = [0, 0, 1]
+        list_unknown.append(type_list[0])
+        list_zheng.append(type_list[1])
+        list_he.append(type_list[2])
+    dict_renttype = {"unknown": list_unknown, "whole_rent": list_zheng, "share_rent": list_he}
+    df_rent = pd.DataFrame(dict_renttype)
+    df_res = pd.concat([df_process, df_rent], axis=1)
+    df_res.drop(['rentType'], axis=1, inplace=True)
+    return df_res
 
 
 def process_houseType(df_process):
