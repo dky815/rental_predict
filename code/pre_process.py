@@ -66,6 +66,11 @@ def process_rentType(df_process):
     return df_res
 
 
+def process_rentType_nodiv(df_process):
+    df_process['rentType'] = df_process['rentType'].map(rentType2number)
+    return df_process
+
+
 def process_houseType(df_process):
     list_bedroom = []
     list_livingroom = []
@@ -88,7 +93,7 @@ def process_houseFloor(df_process):
     return df_process
 
 
-def proecss_houseToward(df_process):
+def process_houseToward(df_process):
     dict_toward = {
         'east': [],
         'south': [],
@@ -176,6 +181,35 @@ def proecss_houseToward(df_process):
     return df_res
 
 
+def process_houseToward_nodiv(df_process):
+    for index, row in df_process.iterrows():
+        toward_str = row['houseToward']
+        if toward_str == '东':
+            toward_num = 0
+        elif toward_str == '南':
+            toward_num = 1
+        elif toward_str == '西':
+            toward_num = 2
+        elif toward_str == '北':
+            toward_num = 3
+        elif toward_str == '东南':
+            toward_num = 4
+        elif toward_str == '西南':
+            toward_num = 5
+        elif toward_str == '西北':
+            toward_num = 6
+        elif toward_str == '东北':
+            toward_num = 7
+        elif toward_str == '南北':
+            toward_num = 8
+        elif toward_str == '东西':
+            toward_num = 9
+        else:
+            toward_num = 10
+        df_process.loc[index, 'houseToward'] = toward_num
+    return df_process
+
+
 def process_houseDecoration(df_process):
     dict_decoration = {
         'other': [],
@@ -213,6 +247,21 @@ def process_houseDecoration(df_process):
     df_res = pd.concat([df_process, df_toward], axis=1)
     df_res.drop(['houseDecoration'], axis=1, inplace=True)
     return df_res
+
+
+def process_houseDecoration_nodiv(df_process):
+    for index, row in df_process.iterrows():
+        decoration_str = row['houseDecoration']
+        if decoration_str == '精装':
+            decoration_num = 0
+        elif decoration_str == '简装':
+            decoration_num = 1
+        elif decoration_str == '毛坯':
+            decoration_num = 2
+        else:
+            decoration_num = 3
+        df_process.loc[index, 'houseDecoration'] = decoration_num
+    return df_process
 
 
 def process_communityName(df_process):
@@ -284,27 +333,57 @@ def process_region(df_process):
     return df_process
 
 
-def preprocess(csv_file):
+def preprocess(csv_file, type="LGBM"):
     df_new = csv_file.copy()
-    df_new = filter(df_new)
-    df_new = process_rentType(df_new)
-    df_new = process_houseType(df_new)
-    df_new = process_houseFloor(df_new)
-    df_new = proecss_houseToward(df_new)
-    df_new = process_houseDecoration(df_new)
-    df_new = process_communityName(df_new)
-    df_new = process_city(df_new)
-    df_new = process_tradeTime(df_new)
-    df_new = process_buildYear(df_new)
-    df_new = process_uv_pv(df_new)
-    df_new = process_plate(df_new)
-    df_new = process_region(df_new)
+    if type != "LGBM":
+        df_new = filter(df_new)
+        df_new = process_rentType(df_new)
+        df_new = process_houseType(df_new)
+        df_new = process_houseFloor(df_new)
+        df_new = process_houseToward(df_new)
+        df_new = process_houseDecoration(df_new)
+        df_new = process_communityName(df_new)
+        df_new = process_city(df_new)
+        df_new = process_tradeTime(df_new)
+        df_new = process_buildYear(df_new)
+        df_new = process_uv_pv(df_new)
+        df_new = process_plate(df_new)
+        df_new = process_region(df_new)
+    else:
+        df_new = filter(df_new)
+        print("filter")
+        df_new = process_rentType_nodiv(df_new)
+        print("renttype")
+        df_new = process_houseType(df_new)
+        print("hosuetype")
+        df_new = process_houseFloor(df_new)
+        print("housefloor")
+        df_new = process_houseToward_nodiv(df_new)
+        print("housetoward")
+        df_new = process_houseDecoration_nodiv(df_new)
+        print("housedecoration")
+        df_new = process_communityName(df_new)
+        print("communityName")
+        df_new = process_city(df_new)
+        print("city")
+        df_new = process_tradeTime(df_new)
+        print("tradetime")
+        df_new = process_buildYear(df_new)
+        print("buildyear")
+        df_new = process_uv_pv(df_new)
+        print("uv_pv")
+        df_new = process_plate(df_new)
+        print("plate")
+        df_new = process_region(df_new)
+        print("region")
     return df_new
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    df_new = preprocess(csv_file_train)
-    df_new.to_csv('../result/data_processed.csv', index=False)
+    process_type="LGBM"
+    df_new = preprocess(csv_file_train,process_type)
+    file_name="data_processed"+process_type+".csv"
+    df_new.to_csv('../result/'+file_name, index=False)
     end_time = time.time()
     print("cost time = " + str(end_time - start_time))
