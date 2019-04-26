@@ -28,3 +28,55 @@ tradeTime 分成3列
 
 处理方式:
 目前2种，LGBM和默认的空字符串（线性回归）
+
+lightGBM:0.85212
+目前添加了region plate communityName tradeMonth的平均tradeMoney和pv_div_uv作为新特征
+region plate communityName 三个平均从0.808->0.846
+
+pv_div_uv 0.846->0.848
+
+tradeMonth的平均0.848->0.852
+
+Linear_Regression:bias=1.65306122449 score=0.731681680179
+
+
+
+特征test：
+totalfloor*housefloor(0/3 1/3 2/3)
+
+x室y厅z卫 找几个合适的权重 相乘相加得到一个数(卧室1/3 客厅1/3 卫生间1/14)
+
+选几列，例如（height,totalheight,bedroom,livingroom,bathroom.....）做个dbscan然后把label当一列特征（优先级低）
+
+tradeYear-buildYear算一个房龄
+
+所在region中有多少个plate
+
+所在plate中有多少个小区
+
+（把region和实际上海行政区对应）
+
+交通设施总数，教育机构总数，生活服务总数
+
+二手房成交总金额/二手房成交套数
+
+新房成交总金额/新房成交总套数
+
+本月成交套数+未成交套数=总套数
+
+总套数*新房成交均价
+
+当月板块土地供应面积/供应幅数
+
+当月板块土地成交面积/成交幅数
+
+totalWorkers/residentPopulation
+
+newWorkers/totalWorkers
+
+人均配套设施（低优先级）
+
+lookNum/pv
+
+lookNum/uv
+
