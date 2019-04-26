@@ -42,21 +42,21 @@ Linear_Regression:bias=1.65306122449 score=0.731681680179
 
 
 特征test：
-totalfloor*housefloor(0/3 1/3 2/3)
+totalfloor*housefloor(0/3 1/3 2/3) finish
 
-x室y厅z卫 找几个合适的权重 相乘相加得到一个数(卧室1/3 客厅1/3 卫生间1/14)
+x室y厅z卫 找几个合适的权重 相乘相加得到一个数(卧室1/3 客厅1/3 卫生间1/14) finish
 
-选几列，例如（height,totalheight,bedroom,livingroom,bathroom.....）做个dbscan然后把label当一列特征（优先级低）
+选几列，例如（height,totalheight,bedroom,livingroom,bathroom.....）做个dbscan然后把label当一列特征（低优先级）
 
-tradeYear-buildYear算一个房龄
+tradeYear-buildYear算一个房龄 finish
 
-所在region中有多少个plate
+所在region中有多少个plate finish
 
-所在plate中有多少个小区
+所在plate中有多少个小区 finish
 
-（把region和实际上海行政区对应）
+（把region和实际上海行政区对应）(低优先级)
 
-交通设施总数，教育机构总数，生活服务总数
+交通设施总数，教育机构总数，生活服务总数 
 
 二手房成交总金额/二手房成交套数
 
