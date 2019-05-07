@@ -35,7 +35,7 @@ def filter(df_process):
     for index, row in df_process.iterrows():
         area = row['area']
         tradeMoney = row['tradeMoney']
-        if area <= 6 or area >= 1500 or tradeMoney >= 500000 or float(tradeMoney) / float(area) >= 1500:
+        if area <= 6 or area >= 1500 or tradeMoney >= 500000 or float(tradeMoney) / float(area) >= 500:
             list_drop_index.append(index)
     list_drop_index = list(set(list_drop_index))
     df_process = df_process.drop(list_drop_index)
@@ -59,7 +59,7 @@ def process_rentType(df_process):
         list_unknown.append(type_list[0])
         list_zheng.append(type_list[1])
         list_he.append(type_list[2])
-    dict_renttype = {"unknown": list_unknown, "whole_rent": list_zheng, "share_rent": list_he}
+    dict_renttype = {"unknown_rent": list_unknown, "whole_rent": list_zheng, "share_rent": list_he}
     df_rent = pd.DataFrame(dict_renttype)
     df_res = pd.concat([df_process, df_rent], axis=1)
     df_res.drop(['rentType'], axis=1, inplace=True)
@@ -105,7 +105,7 @@ def process_houseToward(df_process):
         'north_east': [],
         'south_north': [],
         'east_west': [],
-        'unknown': []
+        'unknown_toward': []
     }
     for index, row in df_process.iterrows():
         toward_str = row['houseToward']
@@ -171,7 +171,7 @@ def process_houseToward(df_process):
                     dict_toward[key].append(0)
         else:
             for key, val in dict_toward.items():
-                if key == 'unknown':
+                if key == 'unknown_toward':
                     dict_toward[key].append(1)
                 else:
                     dict_toward[key].append(0)
@@ -333,9 +333,9 @@ def process_region(df_process):
     return df_process
 
 
-def preprocess(csv_file, type="LGBM"):
+def preprocess(csv_file, type=""):
     df_new = csv_file.copy()
-    if type != "LGBM":
+    if type != "":
         df_new = filter(df_new)
         df_new = process_rentType(df_new)
         df_new = process_houseType(df_new)
@@ -381,7 +381,7 @@ def preprocess(csv_file, type="LGBM"):
 
 if __name__ == "__main__":
     start_time = time.time()
-    process_type="LGBM"
+    process_type=""
     df_new = preprocess(csv_file_train,process_type)
     file_name="data_processed"+process_type+".csv"
     df_new.to_csv('../result/'+file_name, index=False)
